@@ -1,6 +1,6 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'google_maps.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,6 +12,17 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final String bus1 = 'Bus 1';
+  final String bus2 = 'Bus 2';
+  final String bus3 = 'Bus 3';
+
+  void saveData(String bus) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setString('Bus', bus);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,12 +36,13 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pushNamed(context, MapsGoogle.id);
+                saveData(bus1);
               },
-              child: const Text(
-                'Bus 1',
-                style: TextStyle(color: Color(0xFF400128)),
+              child: Text(
+                bus1,
+                style: const TextStyle(color: Color(0xFF400128)),
               ),
               style: ElevatedButton.styleFrom(
                   primary: const Color(0xFFDAAB2D),
@@ -44,10 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pushNamed(context, MapsGoogle.id);
+                  saveData(bus2);
                 },
-                child: const Text(
-                  'Bus 2',
-                  style: TextStyle(color: Color(0xFF400128)),
+                child: Text(
+                  bus2,
+                  style: const TextStyle(color: Color(0xFF400128)),
                 ),
                 style: ElevatedButton.styleFrom(
                     primary: const Color(0xFFDAAB2D),
@@ -60,10 +73,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, MapsGoogle.id);
+                saveData(bus3);
               },
-              child: const Text(
-                'Bus 3',
-                style: TextStyle(color: Color(0xFF400128)),
+              child: Text(
+                bus3,
+                style: const TextStyle(color: Color(0xFF400128)),
               ),
               style: ElevatedButton.styleFrom(
                   primary: const Color(0xFFDAAB2D),
