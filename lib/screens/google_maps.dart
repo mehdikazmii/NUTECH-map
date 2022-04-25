@@ -26,12 +26,12 @@ class _MapsGoogleState extends State<MapsGoogle> {
   late GoogleMapController googleMapController;
   LocationProvider location = LocationProvider();
   String bus = 'Bus';
-
   @override
   void initState() {
     super.initState();
-    Provider.of<LocationProvider>(context, listen: false).initialization();
-    Provider.of<LocationProvider>(context, listen: false).getSourcelocation();
+    setState(() {
+      Provider.of<LocationProvider>(context, listen: false).initialization();
+    });
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -80,6 +80,10 @@ class _MapsGoogleState extends State<MapsGoogle> {
     getData();
   }
 
+  delay() async {
+    await Future.delayed(const Duration(seconds: 3));
+  }
+
   getData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -116,120 +120,119 @@ class _MapsGoogleState extends State<MapsGoogle> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LocationProvider>(builder: (consumerContext, model, child) {
-      if (model.locationPosition != null) {
-        return Scaffold(
-          body: model.locationPosition == null
-              ? const Center(child: SpinKitCircle(color: Colors.black))
-              : Stack(alignment: Alignment.center, children: [
-                  GoogleMap(
-                    mapType: MapType.normal,
-                    myLocationEnabled: true,
-                    initialCameraPosition: CameraPosition(
-                      target: model.locationPosition!,
-                      zoom: 13.4746,
-                    ),
-                    myLocationButtonEnabled: false,
-                    markers: Set<Marker>.of(model.markers.values),
-                    //polylines: Set<Polyline>.of(polylines.values),
-                    tiltGesturesEnabled: true,
-                    compassEnabled: true,
-                    scrollGesturesEnabled: true,
-                    zoomGesturesEnabled: true,
-                    onMapCreated: (GoogleMapController controller) {
-                      _controllerGoogleMap.complete(controller);
-                      googleMapController = controller;
-                    },
+    return Consumer<LocationProvider?>(
+        builder: (consumerContext, model, child) {
+      return Scaffold(
+        body: model!.locationPosition == null && model.sourceLocation == null
+            ? const Center(child: SpinKitCircle(color: Colors.black))
+            : Stack(alignment: Alignment.center, children: [
+                GoogleMap(
+                  mapType: MapType.normal,
+                  myLocationEnabled: true,
+                  initialCameraPosition: CameraPosition(
+                    target: model.locationPosition!,
+                    zoom: 13.4746,
                   ),
-                  Positioned(
-                    bottom: 20.0,
+                  myLocationButtonEnabled: false,
+                  markers: Set<Marker>.of(model.markers.values),
+                  //polylines: Set<Polyline>.of(polylines.values),
+                  tiltGesturesEnabled: true,
+                  compassEnabled: true,
+                  scrollGesturesEnabled: true,
+                  zoomGesturesEnabled: true,
+                  onMapCreated: (GoogleMapController controller) {
+                    _controllerGoogleMap.complete(controller);
+                    googleMapController = controller;
+                  },
+                ),
+                Positioned(
+                  bottom: 20.0,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: Text(
+                      'Bus Distance :  ' +
+                          calculateDistance(
+                            model.markers.values
+                                .singleWhere((element) =>
+                                    element.markerId ==
+                                    const MarkerId("destination"))
+                                .position
+                                .latitude,
+                            model.markers.values
+                                .singleWhere((element) =>
+                                    element.markerId ==
+                                    const MarkerId("destination"))
+                                .position
+                                .longitude,
+                            model.markers.values
+                                .singleWhere((element) =>
+                                    element.markerId ==
+                                    const MarkerId("source"))
+                                .position
+                                .latitude,
+                            model.markers.values
+                                .singleWhere((element) =>
+                                    element.markerId ==
+                                    const MarkerId("source"))
+                                .position
+                                .longitude,
+                          ).toInt().toString() +
+                          '  km',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 50.0,
+                  left: 20,
+                  child: GestureDetector(
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.all(Radius.circular(20))),
                       child: Text(
-                        'Bus Distance :  ' +
-                            calculateDistance(
-                              model.markers.values
-                                  .singleWhere((element) =>
-                                      element.markerId ==
-                                      const MarkerId("destination"))
-                                  .position
-                                  .latitude,
-                              model.markers.values
-                                  .singleWhere((element) =>
-                                      element.markerId ==
-                                      const MarkerId("destination"))
-                                  .position
-                                  .longitude,
-                              model.markers.values
-                                  .singleWhere((element) =>
-                                      element.markerId ==
-                                      const MarkerId("source"))
-                                  .position
-                                  .latitude,
-                              model.markers.values
-                                  .singleWhere((element) =>
-                                      element.markerId ==
-                                      const MarkerId("source"))
-                                  .position
-                                  .longitude,
-                            ).toInt().toString() +
-                            '  km',
+                        bus,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
+                    onTap: navigate,
                   ),
-                  Positioned(
-                    top: 50.0,
-                    left: 20,
-                    child: GestureDetector(
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                        child: Text(
-                          bus,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      onTap: navigate,
-                    ),
-                  ),
-                ]),
-          floatingActionButton: DraggableFab(
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 100),
-              child: FloatingActionButton(
-                onPressed: () {
-                  googleMapController.animateCamera(
-                      CameraUpdate.newCameraPosition(CameraPosition(
-                    target: LatLng(model.locationPosition!.latitude,
-                        model.locationPosition!.longitude),
-                    zoom: 15.4746,
-                  )));
-                  flutterLocalNotificationsPlugin.show(
-                      0,
-                      "Testing",
-                      "How you doin ?",
-                      NotificationDetails(
-                          android: AndroidNotificationDetails(
-                              channel.id, channel.name,
-                              importance: Importance.high,
-                              color: Colors.blue,
-                              playSound: true,
-                              icon: '@mipmap/ic_launcher')));
-                },
-                child: const Icon(Icons.center_focus_strong),
-              ),
+                ),
+              ]),
+        floatingActionButton: DraggableFab(
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 100),
+            child: FloatingActionButton(
+              onPressed: () {
+                googleMapController.animateCamera(
+                    CameraUpdate.newCameraPosition(CameraPosition(
+                  target: LatLng(model.locationPosition!.latitude,
+                      model.locationPosition!.longitude),
+                  zoom: 15.4746,
+                )));
+                flutterLocalNotificationsPlugin.show(
+                    0,
+                    "Testing",
+                    "How you doin ?",
+                    NotificationDetails(
+                        android: AndroidNotificationDetails(
+                            channel.id, channel.name,
+                            importance: Importance.high,
+                            color: Colors.blue,
+                            playSound: true,
+                            icon: '@mipmap/ic_launcher')));
+              },
+              child: const Icon(Icons.center_focus_strong),
             ),
           ),
-        );
-      }
-      return const Center(child: CircularProgressIndicator());
+        ),
+      );
+
+      // return const Center(child: CircularProgressIndicator());
     });
   }
 }

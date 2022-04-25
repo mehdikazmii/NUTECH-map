@@ -1,5 +1,8 @@
 // ignore_for_file: avoid_print
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+
+// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,14 +14,15 @@ class LocationProvider with ChangeNotifier {
   LatLng? locationPosition;
   bool locationServiceActive = true;
   LatLng? sourceLocation;
-  final _firestore = FirebaseFirestore.instance;
+  // final _firestore = FirebaseFirestore.instance;
   Map<MarkerId, Marker> markers = {};
   BitmapDescriptor? sourceIcon;
   BitmapDescriptor? destinationIcon;
 
   initialization() async {
-    await getUserLocation();
     setSourceAndDestinationIcons();
+    getUserLocation();
+    getSourcelocation();
   }
 
   getUserLocation() async {
@@ -38,14 +42,16 @@ class LocationProvider with ChangeNotifier {
         return;
       }
     }
-    _location.onLocationChanged.listen((LocationData currentLocation) {
+    _location.onLocationChanged.listen((LocationData currentLocation) async {
       locationPosition =
           LatLng(currentLocation.latitude!, currentLocation.longitude!);
 
       /// destination marker
-      addMarker(LatLng(locationPosition!.latitude, locationPosition!.longitude),
-          "destination", destinationIcon!);
-      //print(locationPosition);
+      await addMarker(
+          LatLng(locationPosition!.latitude, locationPosition!.longitude),
+          "destination",
+          destinationIcon!);
+      print(locationPosition);
       notifyListeners();
     });
   }
@@ -58,18 +64,25 @@ class LocationProvider with ChangeNotifier {
   }
 
   getSourcelocation() async {
-    var map = {};
-    var dataa = _firestore.collection('Locations').snapshots();
-    await for (var snapshot in dataa) {
-      for (var data in snapshot.docs) {
-        map = data.data();
-        sourceLocation = LatLng(map['location']['0'], map['location']['1']);
-        //print(sourceLocation);
+    try {
+      DatabaseReference ref = FirebaseDatabase.instance.ref("GPS1");
 
-        //source marker
-        addMarker(LatLng(sourceLocation!.latitude, sourceLocation!.longitude),
-            "source", sourceIcon!);
-      }
+      Stream<DatabaseEvent> stream = ref.onValue;
+      stream.listen((DatabaseEvent event) async {
+        Map<String, dynamic> data = jsonDecode(jsonEncode(event.snapshot.value))
+            as Map<String, dynamic>;
+        print(data);
+        print(
+            'Mehdi data is here yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
+        sourceLocation = LatLng(data['latitude'], data['longitude']);
+        await addMarker(
+            LatLng(sourceLocation!.latitude, sourceLocation!.longitude),
+            "source",
+            sourceIcon!);
+      }).onError((error) => print('Mehdi your error is here find it $error'));
+    } catch (e) {
+      print('Mehdi your catch errror is here');
+      print(e);
     }
   }
 
@@ -88,3 +101,24 @@ class LocationProvider with ChangeNotifier {
     });
   }
 }
+
+
+
+
+  // getSourcelocation() async {
+  //   var map = {};
+  //   var dataa = _firestore.collection('Locations').snapshots();
+  //   await for (var snapshot in dataa) {
+  //     for (var data in snapshot.docs) {
+  //       map = data.data();
+  //       sourceLocation = LatLng(map['location']['0'], map['location']['1']);
+  //       print(sourceLocation);
+
+  //       //source marker
+  //       await addMarker(
+  //           LatLng(sourceLocation!.latitude, sourceLocation!.longitude),
+  //           "source",
+  //           sourceIcon!);
+  //     }
+  //   }
+  // }

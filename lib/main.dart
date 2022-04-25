@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:maps/location/get_data.dart';
 import 'package:maps/screens/google_maps.dart';
 import 'package:maps/screens/home_screen.dart';
 import 'package:maps/screens/welcome_screen.dart';
@@ -66,6 +67,7 @@ class _MyAppState extends State<MyApp> {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
+          // home: GetData(),
           initialRoute: WelcomeScreen.id,
           routes: {
             MapsGoogle.id: (context) => const MapsGoogle(),
