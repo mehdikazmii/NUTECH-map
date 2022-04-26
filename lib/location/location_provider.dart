@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationProvider with ChangeNotifier {
   final Location _location = Location();
@@ -65,9 +66,17 @@ class LocationProvider with ChangeNotifier {
 
   getSourcelocation() async {
     try {
-      DatabaseReference ref = FirebaseDatabase.instance.ref("GPS1");
-
-      Stream<DatabaseEvent> stream = ref.onValue;
+      final prefs = await SharedPreferences.getInstance();
+      var check = prefs.getString('Bus');
+      DatabaseReference? ref;
+      if (check == 'Bus 1') {
+        ref = FirebaseDatabase.instance.ref("GPS1");
+      } else if (check == 'Bus 2') {
+        ref = FirebaseDatabase.instance.ref("GPS2");
+      } else if (check == 'Bus 3') {
+        ref = FirebaseDatabase.instance.ref("GPS3");
+      }
+      Stream<DatabaseEvent> stream = ref!.onValue;
       stream.listen((DatabaseEvent event) async {
         Map<String, dynamic> data = jsonDecode(jsonEncode(event.snapshot.value))
             as Map<String, dynamic>;
@@ -89,13 +98,14 @@ class LocationProvider with ChangeNotifier {
   void setSourceAndDestinationIcons() async {
     BitmapDescriptor.fromAssetImage(
             const ImageConfiguration(size: Size(40, 40)),
-            'assets/driving_pin.png')
+            'assets/bus_marker.png')
         .then((onValue) {
       sourceIcon = onValue;
     });
 
     BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(size: Size(40, 40)), 'assets/user.png')
+            const ImageConfiguration(size: Size(40, 40)),
+            'assets/user_marker.png')
         .then((onValue) {
       destinationIcon = onValue;
     });

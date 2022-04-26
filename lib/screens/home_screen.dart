@@ -26,68 +26,137 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF262626),
-      appBar: AppBar(
-        title: const Text('NUTECH  Bus  Tracking'),
-        backgroundColor: const Color(0xFF020B13),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.pushNamed(context, MapsGoogle.id);
-                saveData(bus1);
-              },
-              child: Text(
-                bus1,
-                style: const TextStyle(color: Color(0xFF400128)),
-              ),
-              style: ElevatedButton.styleFrom(
-                  primary: const Color(0xFFDAAB2D),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 65, vertical: 10),
-                  textStyle: const TextStyle(
-                      fontSize: 25, fontWeight: FontWeight.bold)),
+      backgroundColor: Colors.white,
+      body: Stack(
+        children: [
+          Container(
+            height: 270,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/home_pic.png"), fit: BoxFit.cover),
             ),
-            Container(
-              margin: const EdgeInsets.all(20),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, MapsGoogle.id);
-                  saveData(bus2);
-                },
+            child: const Center(
                 child: Text(
-                  bus2,
-                  style: const TextStyle(color: Color(0xFF400128)),
+              'NUTECH',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+              ),
+            )),
+          ),
+          Column(
+            children: [
+              Container(
+                height: 250,
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height / 1.7,
+                width: MediaQuery.of(context).size.width,
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0))),
+                // child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                        margin: const EdgeInsets.only(top: 7),
+                        height: 3,
+                        width: 80,
+                        color: Colors.black),
+                    const Text(
+                      'Select Your Bus',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.pushNamed(context, MapsGoogle.id);
+                          saveData(bus1);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            const Icon(Icons.directions_bus_filled_outlined),
+                            Text(
+                              bus1,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                        style: ElevatedButton.styleFrom(
+                            primary: const Color(0xFF115A4A),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 65, vertical: 13),
+                            textStyle: const TextStyle(
+                                fontSize: 25, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, MapsGoogle.id);
+                          saveData(bus2);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            const Icon(Icons.directions_bus_filled_outlined),
+                            Text(
+                              bus2,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                        style: ElevatedButton.styleFrom(
+                            primary: const Color(0xFF115A4A),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 65, vertical: 13),
+                            textStyle: const TextStyle(
+                                fontSize: 25, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, MapsGoogle.id);
+                          saveData(bus3);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            const Icon(Icons.directions_bus_filled_outlined),
+                            Text(
+                              bus3,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                        style: ElevatedButton.styleFrom(
+                            primary: const Color(0xFF115A4A),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 65, vertical: 13),
+                            textStyle: const TextStyle(
+                                fontSize: 25, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
                 ),
-                style: ElevatedButton.styleFrom(
-                    primary: const Color(0xFFDAAB2D),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 65, vertical: 10),
-                    textStyle: const TextStyle(
-                        fontSize: 25, fontWeight: FontWeight.bold)),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, MapsGoogle.id);
-                saveData(bus3);
-              },
-              child: Text(
-                bus3,
-                style: const TextStyle(color: Color(0xFF400128)),
-              ),
-              style: ElevatedButton.styleFrom(
-                  primary: const Color(0xFFDAAB2D),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 65, vertical: 10),
-                  textStyle: const TextStyle(
-                      fontSize: 25, fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
+              //),
+            ],
+          )
+        ],
       ),
     );
   }

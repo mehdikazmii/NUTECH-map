@@ -129,15 +129,20 @@ class _MapsGoogleState extends State<MapsGoogle> {
                 GoogleMap(
                   mapType: MapType.normal,
                   myLocationEnabled: true,
+                  padding: const EdgeInsets.only(
+                    top: 90,
+                  ),
+
                   initialCameraPosition: CameraPosition(
                     target: model.locationPosition!,
                     zoom: 13.4746,
                   ),
-                  myLocationButtonEnabled: false,
+                  myLocationButtonEnabled: true,
                   markers: Set<Marker>.of(model.markers.values),
                   //polylines: Set<Polyline>.of(polylines.values),
                   tiltGesturesEnabled: true,
                   compassEnabled: true,
+                  zoomControlsEnabled: false,
                   scrollGesturesEnabled: true,
                   zoomGesturesEnabled: true,
                   onMapCreated: (GoogleMapController controller) {
@@ -150,7 +155,7 @@ class _MapsGoogleState extends State<MapsGoogle> {
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: const BoxDecoration(
-                        color: Colors.white,
+                        color: Color(0xFF115A4A),
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: Text(
                       'Bus Distance :  ' +
@@ -181,7 +186,8 @@ class _MapsGoogleState extends State<MapsGoogle> {
                                 .longitude,
                           ).toInt().toString() +
                           '  km',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
                 ),
@@ -192,11 +198,12 @@ class _MapsGoogleState extends State<MapsGoogle> {
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: const BoxDecoration(
-                          color: Colors.white,
+                          color: Color(0xFF115A4A),
                           borderRadius: BorderRadius.all(Radius.circular(20))),
                       child: Text(
                         bus,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
                     onTap: navigate,
@@ -207,32 +214,31 @@ class _MapsGoogleState extends State<MapsGoogle> {
           child: Container(
             margin: const EdgeInsets.only(bottom: 100),
             child: FloatingActionButton(
+              backgroundColor: const Color(0xFF115A4A),
+              tooltip: ('Track your Bus'),
               onPressed: () {
                 googleMapController.animateCamera(
                     CameraUpdate.newCameraPosition(CameraPosition(
-                  target: LatLng(model.locationPosition!.latitude,
-                      model.locationPosition!.longitude),
+                  target: model.sourceLocation!,
                   zoom: 15.4746,
                 )));
-                flutterLocalNotificationsPlugin.show(
-                    0,
-                    "Testing",
-                    "How you doin ?",
-                    NotificationDetails(
-                        android: AndroidNotificationDetails(
-                            channel.id, channel.name,
-                            importance: Importance.high,
-                            color: Colors.blue,
-                            playSound: true,
-                            icon: '@mipmap/ic_launcher')));
+                // flutterLocalNotificationsPlugin.show(
+                //     0,
+                //     "Testing",
+                //     "How you doin ?",
+                //     NotificationDetails(
+                //         android: AndroidNotificationDetails(
+                //             channel.id, channel.name,
+                //             importance: Importance.high,
+                //             color: Colors.blue,
+                //             playSound: true,
+                //             icon: '@mipmap/ic_launcher')));
               },
-              child: const Icon(Icons.center_focus_strong),
+              child: const Icon(Icons.center_focus_strong, color: Colors.white),
             ),
           ),
         ),
       );
-
-      // return const Center(child: CircularProgressIndicator());
     });
   }
 }

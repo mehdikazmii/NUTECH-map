@@ -53,11 +53,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Color(0xFF262626),
-      body: Center(
-          child: Text('Bus Tracking System by NUTECH',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: Color(0xFFDAAB2D)))),
-    );
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Image(image: AssetImage('assets/Splashscreen_logo.png')),
+        ));
   }
 }
