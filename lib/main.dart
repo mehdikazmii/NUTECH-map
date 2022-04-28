@@ -1,47 +1,17 @@
 // ignore_for_file: avoid_print
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:maps/location/get_data.dart';
 import 'package:maps/screens/google_maps.dart';
 import 'package:maps/screens/home_screen.dart';
-import 'package:maps/screens/welcome_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'location/location_provider.dart';
-
-const AndroidNotificationChannel channel = AndroidNotificationChannel(
-  'high_importance_channel', // id
-  'High Importance Notifications', // title
-  //'This channel is used for important notifications.', // description
-  importance: Importance.high,
-  playSound: true,
-);
-
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print('A bg message just showed up: ${message.messageId}');
-}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true, // Required to display a heads up notification
-    badge: true,
-    sound: true,
-  );
   runApp(const MyApp());
 }
 
@@ -53,6 +23,35 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  bool? bus;
+  @override
+  void initState() {
+    super.initState();
+    getData();
+    requestPermission(Permission.notification);
+  }
+
+  void getData() async {
+    final prefs = await SharedPreferences.getInstance();
+    print(prefs.getKeys());
+    setState(() {
+      if (prefs.getString('Bus') != null) {
+        bus = true;
+      } else {
+        bus = false;
+      }
+    });
+  }
+
+  requestPermission(Permission notification) async {
+    if (await Permission.location.isGranted) {
+    } else if (await Permission.location.isDenied) {}
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+    ].request();
+    print(statuses[Permission.location]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -68,11 +67,14 @@ class _MyAppState extends State<MyApp> {
             primarySwatch: Colors.blue,
           ),
           // home: GetData(),
-          initialRoute: WelcomeScreen.id,
+          home: bus != null
+              ? bus!
+                  ? const MapsGoogle()
+                  : const HomeScreen()
+              : const CircularProgressIndicator(),
           routes: {
             MapsGoogle.id: (context) => const MapsGoogle(),
             HomeScreen.id: (context) => const HomeScreen(),
-            WelcomeScreen.id: (context) => const WelcomeScreen(),
           },
         ));
   }

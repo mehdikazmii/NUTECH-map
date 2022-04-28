@@ -1,7 +1,5 @@
 // ignore_for_file: avoid_print
 import 'dart:convert';
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +13,6 @@ class LocationProvider with ChangeNotifier {
   LatLng? locationPosition;
   bool locationServiceActive = true;
   LatLng? sourceLocation;
-  // final _firestore = FirebaseFirestore.instance;
   Map<MarkerId, Marker> markers = {};
   BitmapDescriptor? sourceIcon;
   BitmapDescriptor? destinationIcon;
@@ -57,13 +54,6 @@ class LocationProvider with ChangeNotifier {
     });
   }
 
-  addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
-    MarkerId markerId = MarkerId(id);
-    Marker marker =
-        Marker(markerId: markerId, icon: descriptor, position: position);
-    markers[markerId] = marker;
-  }
-
   getSourcelocation() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -80,19 +70,22 @@ class LocationProvider with ChangeNotifier {
       stream.listen((DatabaseEvent event) async {
         Map<String, dynamic> data = jsonDecode(jsonEncode(event.snapshot.value))
             as Map<String, dynamic>;
-        print(data);
-        print(
-            'Mehdi data is here yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
         sourceLocation = LatLng(data['latitude'], data['longitude']);
         await addMarker(
             LatLng(sourceLocation!.latitude, sourceLocation!.longitude),
             "source",
             sourceIcon!);
-      }).onError((error) => print('Mehdi your error is here find it $error'));
+      }).onError((error) => print('Basit your error is here find it $error'));
     } catch (e) {
-      print('Mehdi your catch errror is here');
       print(e);
     }
+  }
+
+  addMarker(LatLng position, String id, BitmapDescriptor descriptor) {
+    MarkerId markerId = MarkerId(id);
+    Marker marker =
+        Marker(markerId: markerId, icon: descriptor, position: position);
+    markers[markerId] = marker;
   }
 
   void setSourceAndDestinationIcons() async {

@@ -1,17 +1,15 @@
 // ignore_for_file: avoid_print
 import 'dart:async';
 import 'dart:math';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps/location/location_provider.dart';
-import 'package:maps/main.dart';
 import 'package:maps/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class MapsGoogle extends StatefulWidget {
   static String id = 'MapsGoogle';
@@ -26,62 +24,13 @@ class _MapsGoogleState extends State<MapsGoogle> {
   late GoogleMapController googleMapController;
   LocationProvider location = LocationProvider();
   String bus = 'Bus';
+  String formattedTime = DateFormat.Hms().format(DateTime.now());
+
   @override
   void initState() {
     super.initState();
-    setState(() {
-      Provider.of<LocationProvider>(context, listen: false).initialization();
-    });
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-
-      // If `onMessage` is triggered with a notification, construct our own
-      // local notification to show to users using the created channel.
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                //channel.description,
-                icon: android.smallIcon,
-                playSound: true,
-                color: Colors.blue,
-                // other properties...
-              ),
-            ));
-
-        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-          print('A new onMessageOpenedApp event was Published');
-          RemoteNotification? notification = message.notification;
-          AndroidNotification? android = message.notification?.android;
-          if (notification != null && android != null) {
-            showDialog(
-                context: context,
-                builder: (_) {
-                  return AlertDialog(
-                    title: Text(notification.title!),
-                    content: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [Text(notification.body!)],
-                      ),
-                    ),
-                  );
-                });
-          }
-        });
-      }
-    });
+    Provider.of<LocationProvider>(context, listen: false).initialization();
     getData();
-  }
-
-  delay() async {
-    await Future.delayed(const Duration(seconds: 3));
   }
 
   getData() async {
@@ -98,14 +47,7 @@ class _MapsGoogleState extends State<MapsGoogle> {
         cos((lat2 - lat1) * p) / 2 +
         cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
     distance = 12742 * asin(sqrt(a));
-    niotification(distance);
     return distance;
-  }
-
-  niotification(double distance) async {
-    if (distance <= 2) {
-      await Future.delayed(const Duration(minutes: 4));
-    }
   }
 
   navigate() {
@@ -137,7 +79,7 @@ class _MapsGoogleState extends State<MapsGoogle> {
                     target: model.locationPosition!,
                     zoom: 13.4746,
                   ),
-                  myLocationButtonEnabled: true,
+                  myLocationButtonEnabled: false,
                   markers: Set<Marker>.of(model.markers.values),
                   //polylines: Set<Polyline>.of(polylines.values),
                   tiltGesturesEnabled: true,
@@ -155,39 +97,57 @@ class _MapsGoogleState extends State<MapsGoogle> {
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: const BoxDecoration(
-                        color: Color(0xFF115A4A),
+                        color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(20))),
-                    child: Text(
-                      'Bus Distance :  ' +
-                          calculateDistance(
-                            model.markers.values
-                                .singleWhere((element) =>
-                                    element.markerId ==
-                                    const MarkerId("destination"))
-                                .position
-                                .latitude,
-                            model.markers.values
-                                .singleWhere((element) =>
-                                    element.markerId ==
-                                    const MarkerId("destination"))
-                                .position
-                                .longitude,
-                            model.markers.values
-                                .singleWhere((element) =>
-                                    element.markerId ==
-                                    const MarkerId("source"))
-                                .position
-                                .latitude,
-                            model.markers.values
-                                .singleWhere((element) =>
-                                    element.markerId ==
-                                    const MarkerId("source"))
-                                .position
-                                .longitude,
-                          ).toInt().toString() +
-                          '  km',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.white),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          bus,
+                          style: const TextStyle(
+                              color: Color(0xFF115A4A),
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'Bus Distance :  ' +
+                              calculateDistance(
+                                model.markers.values
+                                    .singleWhere((element) =>
+                                        element.markerId ==
+                                        const MarkerId("destination"))
+                                    .position
+                                    .latitude,
+                                model.markers.values
+                                    .singleWhere((element) =>
+                                        element.markerId ==
+                                        const MarkerId("destination"))
+                                    .position
+                                    .longitude,
+                                model.markers.values
+                                    .singleWhere((element) =>
+                                        element.markerId ==
+                                        const MarkerId("source"))
+                                    .position
+                                    .latitude,
+                                model.markers.values
+                                    .singleWhere((element) =>
+                                        element.markerId ==
+                                        const MarkerId("source"))
+                                    .position
+                                    .longitude,
+                              ).toInt().toString() +
+                              '  km',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF115A4A)),
+                        ),
+                        Text(
+                          'Time : ' + formattedTime.toString(),
+                          style: const TextStyle(
+                              color: Color(0xFF115A4A),
+                              fontWeight: FontWeight.bold),
+                        )
+                      ],
                     ),
                   ),
                 ),
@@ -196,17 +156,38 @@ class _MapsGoogleState extends State<MapsGoogle> {
                   left: 20,
                   child: GestureDetector(
                     child: Container(
-                      padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
+                        decoration: const BoxDecoration(
+                            color: Color(0xFF115A4A),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20))),
+                        child:
+                            const Icon(Icons.arrow_back, color: Colors.white)),
+                    onTap: navigate,
+                  ),
+                ),
+                Positioned(
+                  right: 20,
+                  bottom: 180,
+                  child: GestureDetector(
+                    onTap: () {
+                      googleMapController.animateCamera(
+                          CameraUpdate.newCameraPosition(CameraPosition(
+                        target: model.locationPosition!,
+                        zoom: 15.4746,
+                      )));
+                    },
+                    child: Container(
+                      width: 55,
+                      height: 55,
+                      padding: const EdgeInsets.all(14),
                       decoration: const BoxDecoration(
-                          color: Color(0xFF115A4A),
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      child: Text(
-                        bus,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
+                          color: Color(0xFF115A4A), shape: BoxShape.circle),
+                      child: const Icon(
+                        Icons.person,
+                        color: Colors.white,
                       ),
                     ),
-                    onTap: navigate,
                   ),
                 ),
               ]),
@@ -222,19 +203,9 @@ class _MapsGoogleState extends State<MapsGoogle> {
                   target: model.sourceLocation!,
                   zoom: 15.4746,
                 )));
-                // flutterLocalNotificationsPlugin.show(
-                //     0,
-                //     "Testing",
-                //     "How you doin ?",
-                //     NotificationDetails(
-                //         android: AndroidNotificationDetails(
-                //             channel.id, channel.name,
-                //             importance: Importance.high,
-                //             color: Colors.blue,
-                //             playSound: true,
-                //             icon: '@mipmap/ic_launcher')));
               },
-              child: const Icon(Icons.center_focus_strong, color: Colors.white),
+              child: const Icon(Icons.directions_bus_outlined,
+                  color: Colors.white),
             ),
           ),
         ),

@@ -1,7 +1,6 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'google_maps.dart';
+import 'package:maps/widgets/bus_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,13 +15,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final String bus2 = 'Bus 2';
   final String bus3 = 'Bus 3';
 
-  void saveData(String bus) async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      prefs.setString('Bus', bus);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           Container(
-            height: 270,
+            height: 350,
             width: double.infinity,
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -46,115 +38,50 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             )),
           ),
-          Column(
-            children: [
-              Container(
-                height: 250,
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height / 1.7,
-                width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0))),
-                // child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  height: 330,
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height / 1.5,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.0),
+                          topRight: Radius.circular(30.0))),
+                  // child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(10)),
                         margin: const EdgeInsets.only(top: 7),
                         height: 3,
                         width: 80,
-                        color: Colors.black),
-                    const Text(
-                      'Select Your Bus',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          Navigator.pushNamed(context, MapsGoogle.id);
-                          saveData(bus1);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const Icon(Icons.directions_bus_filled_outlined),
-                            Text(
-                              bus1,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        style: ElevatedButton.styleFrom(
-                            primary: const Color(0xFF115A4A),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 65, vertical: 13),
-                            textStyle: const TextStyle(
-                                fontSize: 25, fontWeight: FontWeight.bold)),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, MapsGoogle.id);
-                          saveData(bus2);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const Icon(Icons.directions_bus_filled_outlined),
-                            Text(
-                              bus2,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        style: ElevatedButton.styleFrom(
-                            primary: const Color(0xFF115A4A),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 65, vertical: 13),
-                            textStyle: const TextStyle(
-                                fontSize: 25, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 100),
+                      const Text(
+                        'Select Your Bus',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, MapsGoogle.id);
-                          saveData(bus3);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            const Icon(Icons.directions_bus_filled_outlined),
-                            Text(
-                              bus3,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        style: ElevatedButton.styleFrom(
-                            primary: const Color(0xFF115A4A),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 65, vertical: 13),
-                            textStyle: const TextStyle(
-                                fontSize: 25, fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                  ],
+                      const SizedBox(height: 50),
+                      BusButton(bus: bus1),
+                      BusButton(bus: bus2),
+                      BusButton(bus: bus3)
+                    ],
+                  ),
                 ),
-              ),
-              //),
-            ],
+                //),
+              ],
+            ),
           )
         ],
       ),

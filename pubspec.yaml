@@ -40,12 +40,16 @@ dependencies:
   draggable_fab: ^0.1.4
   flutter_polyline_points: ^1.0.0
   firebase_core: ^1.12.0
-  flutter_local_notifications: ^9.3.2
-  firebase_messaging: ^11.2.6
   shared_preferences: ^2.0.13
   firebase_database: ^9.0.12
   cloud_firestore: ^3.1.13
   permission_handler: ^9.2.0
+  flutter_native_splash: ^2.1.6
+  intl: ^0.17.0
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/Splashscreen_logo.png
 
 dev_dependencies:
   flutter_test:
