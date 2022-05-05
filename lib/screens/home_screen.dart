@@ -1,5 +1,7 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:maps/constants.dart';
+import 'package:maps/widgets/app_drawer.dart';
 import 'package:maps/widgets/bus_button.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,6 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      drawer: const AppDrawer(),
       body: Stack(
         children: [
           Container(
@@ -81,6 +85,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 //),
               ],
+            ),
+          ),
+          Positioned(
+            top: 34,
+            left: 10,
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30), color: Colors.white),
+              child: Builder(builder: (BuildContext context) {
+                return IconButton(
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                  color: kColor,
+                  icon: const Icon(Icons.menu),
+                );
+              }),
             ),
           )
         ],

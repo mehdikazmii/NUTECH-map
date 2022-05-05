@@ -4,8 +4,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:maps/constants.dart';
 import 'package:maps/location/location_provider.dart';
 import 'package:maps/screens/home_screen.dart';
+import 'package:maps/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -80,7 +82,7 @@ class _MapsGoogleState extends State<MapsGoogle> {
                     zoom: 13.4746,
                   ),
                   myLocationButtonEnabled: false,
-                  markers: Set<Marker>.of(model.markers.values),
+                  markers: Set<Marker>.of(model.markers!.values),
                   //polylines: Set<Polyline>.of(polylines.values),
                   tiltGesturesEnabled: true,
                   compassEnabled: true,
@@ -102,50 +104,101 @@ class _MapsGoogleState extends State<MapsGoogle> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          bus,
-                          style: const TextStyle(
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.directions_bus_outlined,
                               color: Color(0xFF115A4A),
-                              fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              bus,
+                              style: const TextStyle(
+                                  color: Color(0xFF115A4A),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
-                        Text(
-                          'Bus Distance :  ' +
-                              calculateDistance(
-                                model.markers.values
-                                    .singleWhere((element) =>
-                                        element.markerId ==
-                                        const MarkerId("destination"))
-                                    .position
-                                    .latitude,
-                                model.markers.values
-                                    .singleWhere((element) =>
-                                        element.markerId ==
-                                        const MarkerId("destination"))
-                                    .position
-                                    .longitude,
-                                model.markers.values
-                                    .singleWhere((element) =>
-                                        element.markerId ==
-                                        const MarkerId("source"))
-                                    .position
-                                    .latitude,
-                                model.markers.values
-                                    .singleWhere((element) =>
-                                        element.markerId ==
-                                        const MarkerId("source"))
-                                    .position
-                                    .longitude,
-                              ).toInt().toString() +
-                              '  km',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF115A4A)),
-                        ),
-                        Text(
-                          'Time : ' + formattedTime.toString(),
-                          style: const TextStyle(
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.route_outlined,
                               color: Color(0xFF115A4A),
-                              fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              model.markers!.values.isNotEmpty
+                                  ? 'Bus Distance :  ' +
+                                      calculateDistance(
+                                        model.markers!.values
+                                            .singleWhere(
+                                                (element) =>
+                                                    element.markerId ==
+                                                    const MarkerId(
+                                                        "destination"),
+                                                orElse: () => const Marker(
+                                                      markerId:
+                                                          MarkerId('null'),
+                                                    ))
+                                            .position
+                                            .latitude,
+                                        model.markers!.values
+                                            .singleWhere(
+                                                (element) =>
+                                                    element.markerId ==
+                                                    const MarkerId(
+                                                        "destination"),
+                                                orElse: () => const Marker(
+                                                      markerId:
+                                                          MarkerId('null'),
+                                                    ))
+                                            .position
+                                            .longitude,
+                                        model.markers!.values
+                                            .singleWhere(
+                                                (element) =>
+                                                    element.markerId ==
+                                                    const MarkerId("source"),
+                                                orElse: () => const Marker(
+                                                      markerId:
+                                                          MarkerId('null'),
+                                                    ))
+                                            .position
+                                            .latitude,
+                                        model.markers!.values
+                                            .singleWhere(
+                                                (element) =>
+                                                    element.markerId ==
+                                                    const MarkerId("source"),
+                                                orElse: () => const Marker(
+                                                      markerId:
+                                                          MarkerId('null'),
+                                                    ))
+                                            .position
+                                            .longitude,
+                                      ).toInt().toString() +
+                                      '  km'
+                                  : 'Calculating',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF115A4A)),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.access_time_rounded,
+                              color: Color(0xFF115A4A),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Time : ' + formattedTime.toString(),
+                              style: const TextStyle(
+                                  color: Color(0xFF115A4A),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         )
                       ],
                     ),
@@ -153,16 +206,15 @@ class _MapsGoogleState extends State<MapsGoogle> {
                 ),
                 Positioned(
                   top: 50.0,
-                  left: 20,
+                  left: 15,
                   child: GestureDetector(
                     child: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: const BoxDecoration(
-                            color: Color(0xFF115A4A),
+                            color: Colors.white,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(20))),
-                        child:
-                            const Icon(Icons.arrow_back, color: Colors.white)),
+                        child: Icon(Icons.arrow_back, color: kColor)),
                     onTap: navigate,
                   ),
                 ),
@@ -182,30 +234,34 @@ class _MapsGoogleState extends State<MapsGoogle> {
                       height: 55,
                       padding: const EdgeInsets.all(14),
                       decoration: const BoxDecoration(
-                          color: Color(0xFF115A4A), shape: BoxShape.circle),
-                      child: const Icon(
+                          color: Colors.white, shape: BoxShape.circle),
+                      child: Icon(
                         Icons.person,
-                        color: Colors.white,
+                        color: kColor,
                       ),
                     ),
                   ),
                 ),
               ]),
-        floatingActionButton: DraggableFab(
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 100),
-            child: FloatingActionButton(
-              backgroundColor: const Color(0xFF115A4A),
-              tooltip: ('Track your Bus'),
-              onPressed: () {
-                googleMapController.animateCamera(
-                    CameraUpdate.newCameraPosition(CameraPosition(
-                  target: model.sourceLocation!,
-                  zoom: 15.4746,
-                )));
-              },
-              child: const Icon(Icons.directions_bus_outlined,
-                  color: Colors.white),
+        floatingActionButton:
+            // DraggableFab(
+            //   child:
+            Container(
+          margin: const EdgeInsets.only(bottom: 100),
+          child: FloatingActionButton(
+            elevation: 0.0,
+            backgroundColor: Colors.white,
+            tooltip: ('Track your Bus'),
+            onPressed: () {
+              googleMapController
+                  .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+                target: model.sourceLocation!,
+                zoom: 15.4746,
+              )));
+            },
+            child: Icon(
+              Icons.directions_bus_outlined,
+              color: kColor,
             ),
           ),
         ),

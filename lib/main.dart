@@ -2,6 +2,11 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:maps/screens/DrawerScreens/about_us.dart';
+import 'package:maps/screens/DrawerScreens/bus_routes.dart';
+import 'package:maps/screens/DrawerScreens/bus_timetable.dart';
+import 'package:maps/screens/DrawerScreens/feedback.dart';
+import 'package:maps/screens/DrawerScreens/rector_vision.dart';
 import 'package:maps/screens/google_maps.dart';
 import 'package:maps/screens/home_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -75,6 +80,11 @@ class _MyAppState extends State<MyApp> {
           routes: {
             MapsGoogle.id: (context) => const MapsGoogle(),
             HomeScreen.id: (context) => const HomeScreen(),
+            AboutUs.id: (context) => const AboutUs(),
+            BusRoute.id: (context) => const BusRoute(),
+            BusTimetable.id: (context) => const BusTimetable(),
+            FeedbackReport.id: (context) => const FeedbackReport(),
+            RectorVision.id: (context) => const RectorVision(),
           },
         ));
   }

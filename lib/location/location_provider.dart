@@ -13,7 +13,7 @@ class LocationProvider with ChangeNotifier {
   LatLng? locationPosition;
   bool locationServiceActive = true;
   LatLng? sourceLocation;
-  Map<MarkerId, Marker> markers = {};
+  Map<MarkerId, Marker>? markers = {};
   BitmapDescriptor? sourceIcon;
   BitmapDescriptor? destinationIcon;
 
@@ -26,32 +26,36 @@ class LocationProvider with ChangeNotifier {
   getUserLocation() async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
-    _serviceEnabled = await _location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await _location.requestService();
+    try {
+      _serviceEnabled = await _location.serviceEnabled();
       if (!_serviceEnabled) {
-        return;
+        _serviceEnabled = await _location.requestService();
+        if (!_serviceEnabled) {
+          return;
+        }
       }
-    }
-    _permissionGranted = await _location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await _location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
+      _permissionGranted = await _location.hasPermission();
+      if (_permissionGranted == PermissionStatus.denied) {
+        _permissionGranted = await _location.requestPermission();
+        if (_permissionGranted != PermissionStatus.granted) {
+          return;
+        }
       }
-    }
-    _location.onLocationChanged.listen((LocationData currentLocation) async {
-      locationPosition =
-          LatLng(currentLocation.latitude!, currentLocation.longitude!);
+      _location.onLocationChanged.listen((LocationData currentLocation) async {
+        locationPosition =
+            LatLng(currentLocation.latitude!, currentLocation.longitude!);
 
-      /// destination marker
-      await addMarker(
-          LatLng(locationPosition!.latitude, locationPosition!.longitude),
-          "destination",
-          destinationIcon!);
-      print(locationPosition);
-      notifyListeners();
-    });
+        /// destination marker
+        await addMarker(
+            LatLng(locationPosition!.latitude, locationPosition!.longitude),
+            "destination",
+            destinationIcon!);
+        print(locationPosition);
+        notifyListeners();
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   getSourcelocation() async {
@@ -85,7 +89,7 @@ class LocationProvider with ChangeNotifier {
     MarkerId markerId = MarkerId(id);
     Marker marker =
         Marker(markerId: markerId, icon: descriptor, position: position);
-    markers[markerId] = marker;
+    markers![markerId] = marker;
   }
 
   void setSourceAndDestinationIcons() async {
