@@ -1,15 +1,14 @@
 // ignore_for_file: avoid_print
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps/constants.dart';
+import 'package:maps/direction/direction_repository.dart';
 import 'package:maps/location/location_provider.dart';
 import 'package:maps/screens/home_screen.dart';
-import 'package:maps/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
-import 'package:draggable_fab/draggable_fab.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
@@ -27,7 +26,10 @@ class _MapsGoogleState extends State<MapsGoogle> {
   LocationProvider location = LocationProvider();
   String bus = 'Bus';
   String formattedTime = DateFormat.Hms().format(DateTime.now());
-
+  String? totalDistance;
+  String? totalTime;
+  List<PointLatLng>? polylinePoints;
+  LatLngBounds? bounds;
   @override
   void initState() {
     super.initState();
@@ -42,14 +44,30 @@ class _MapsGoogleState extends State<MapsGoogle> {
     });
   }
 
-  double calculateDistance(lat1, lon1, lat2, lon2) {
-    double distance;
-    var p = 0.017453292519943295;
-    var a = 0.5 -
-        cos((lat2 - lat1) * p) / 2 +
-        cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
-    distance = 12742 * asin(sqrt(a));
-    return distance;
+  @override
+  void dispose() {
+    googleMapController.dispose();
+    super.dispose();
+  }
+
+  String calculateDistance(lat1, lon1, lat2, lon2) {
+    DirectionsRepository directionsRepository = DirectionsRepository();
+    directionsRepository
+        .getDirections(
+            origin: LatLng(lat1, lon1), destination: LatLng(lat2, lon2))
+        .then((value) {
+      if (value != null) {
+        setState(() {
+          totalDistance = value.totalDistance;
+          totalTime = value.totalDuration;
+          polylinePoints = value.polylinePoints;
+          bounds = value.bounds;
+          print('changed');
+        });
+      }
+    });
+
+    return totalDistance ?? 'calculating';
   }
 
   navigate() {
@@ -84,6 +102,17 @@ class _MapsGoogleState extends State<MapsGoogle> {
                   myLocationButtonEnabled: false,
                   markers: Set<Marker>.of(model.markers!.values),
                   //polylines: Set<Polyline>.of(polylines.values),
+                  polylines: {
+                    if (polylinePoints != null)
+                      Polyline(
+                        polylineId: const PolylineId('overview_polyline'),
+                        color: const Color(0xFF115A4A),
+                        width: 5,
+                        points: polylinePoints!
+                            .map((e) => LatLng(e.latitude, e.longitude))
+                            .toList(),
+                      ),
+                  },
                   tiltGesturesEnabled: true,
                   compassEnabled: true,
                   zoomControlsEnabled: false,
@@ -176,8 +205,7 @@ class _MapsGoogleState extends State<MapsGoogle> {
                                                     ))
                                             .position
                                             .longitude,
-                                      ).toInt().toString() +
-                                      '  km'
+                                      )
                                   : 'Calculating',
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -193,7 +221,9 @@ class _MapsGoogleState extends State<MapsGoogle> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Time : ' + formattedTime.toString(),
+                              totalTime != null
+                                  ? 'Time : ' + totalTime!
+                                  : 'Time :  calculating',
                               style: const TextStyle(
                                   color: Color(0xFF115A4A),
                                   fontWeight: FontWeight.bold),
@@ -269,3 +299,11 @@ class _MapsGoogleState extends State<MapsGoogle> {
     });
   }
 }
+
+
+    // double distance;
+    // var p = 0.017453292519943295;
+    // var a = 0.5 -
+    //     cos((lat2 - lat1) * p) / 2 +
+    //     cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2;
+    // distance = 12742 * asin(sqrt(a));
