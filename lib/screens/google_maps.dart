@@ -22,7 +22,7 @@ class MapsGoogle extends StatefulWidget {
 
 class _MapsGoogleState extends State<MapsGoogle> {
   final Completer<GoogleMapController> _controllerGoogleMap = Completer();
-  late GoogleMapController googleMapController;
+  late GoogleMapController _googleMapController;
   LocationProvider location = LocationProvider();
   String bus = 'Bus';
   String formattedTime = DateFormat.Hms().format(DateTime.now());
@@ -46,7 +46,7 @@ class _MapsGoogleState extends State<MapsGoogle> {
 
   @override
   void dispose() {
-    googleMapController.dispose();
+    _googleMapController.dispose();
     super.dispose();
   }
 
@@ -120,7 +120,7 @@ class _MapsGoogleState extends State<MapsGoogle> {
                   zoomGesturesEnabled: true,
                   onMapCreated: (GoogleMapController controller) {
                     _controllerGoogleMap.complete(controller);
-                    googleMapController = controller;
+                    _googleMapController = controller;
                   },
                 ),
                 Positioned(
@@ -253,7 +253,7 @@ class _MapsGoogleState extends State<MapsGoogle> {
                   bottom: 180,
                   child: GestureDetector(
                     onTap: () {
-                      googleMapController.animateCamera(
+                      _googleMapController.animateCamera(
                           CameraUpdate.newCameraPosition(CameraPosition(
                         target: model.locationPosition!,
                         zoom: 15.4746,
@@ -283,7 +283,7 @@ class _MapsGoogleState extends State<MapsGoogle> {
             backgroundColor: Colors.white,
             tooltip: ('Track your Bus'),
             onPressed: () {
-              googleMapController
+              _googleMapController
                   .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
                 target: model.sourceLocation!,
                 zoom: 15.4746,

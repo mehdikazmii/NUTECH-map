@@ -71,7 +71,6 @@ class _MyAppState extends State<MyApp> {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          // home: GetData(),
           home: bus != null
               ? bus!
                   ? const MapsGoogle()

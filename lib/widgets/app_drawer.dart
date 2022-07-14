@@ -23,16 +23,16 @@ class AppDrawer extends StatelessWidget {
         "text": "Bus TimeTable",
         "route": BusTimetable.id,
       },
-      {
-        "icon": Icons.feedback_outlined,
-        "text": "Feedback/Report",
-        "route": FeedbackReport.id,
-      },
-      {
-        "icon": Icons.description_outlined,
-        "text": "Rector Vision",
-        "route": RectorVision.id,
-      },
+      // {
+      //   "icon": Icons.feedback_outlined,
+      //   "text": "Feedback/Report",
+      //   "route": FeedbackReport.id,
+      // },
+      // {
+      //   "icon": Icons.description_outlined,
+      //   "text": "Rector Vision",
+      //   "route": RectorVision.id,
+      // },
     ];
     return Container(
       decoration: BoxDecoration(
@@ -55,20 +55,20 @@ class AppDrawer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  const CircleAvatar(
-                    radius: 30.0,
-                    backgroundColor: Colors.white,
-                    foregroundImage: AssetImage('assets/user.png'),
-                    //  NetworkImage(
-                    //     "https://www.google.com/search?q=profile+image&rlz=1C1BNSD_enPK948PK948&tbm=isch&source=iu&ictx=1&fir=B3G4vEo9lSBh0M%252CFvQHUVZ-cx81xM%252C_%253BH6pHpB03ZEAgeM%252Cwg0CyFWNfK7o5M%252C_%253BTUPxmKQ-sparcM%252CFvQHUVZ-cx81xM%252C_%253Bc4DKZX1IkCpVhM%252Cb5C9ViMmmhpq-M%252C_%253BifTSkpz9J2bh_M%252CurvXhMiZrB4IuM%252C_%253BeHQKa74ZnnpTfM%252C4XfudSI_3wLzPM%252C_%253ByRz0asXqc1iKxM%252Cb5C9ViMmmhpq-M%252C_%253BS2NNOWEtx4Sh8M%252CWIYPytbMl_8XfM%252C_%253B-h20Jdis7Qx6mM%252CwxS10_IL7Dpp9M%252C_%253BJpaFCmffhUdABM%252CeirPelkp9eoYkM%252C_%253BC7pA_LYt9qMKyM%252CMG0JGB0B8kPXNM%252C_%253B2DnrLk3Tlyfo4M%252C8eDeiABW8CreFM%252C_%253Blcjtk8drNcGL8M%252COgWk3wP_2xVHMM%252C_%253Bfzm-cB-sF1nIvM%252C4XfudSI_3wLzPM%252C_%253BWgJP1HLvsHDWSM%252C-_VDyVVleiKWeM%252C_%253BXVWcKFwzJq264M%252CFvQHUVZ-cx81xM%252C_&vet=1&usg=AI4_-kRQZaW9Ubn_p-A_vdJl88LIA7BAdg&sa=X&ved=2ahUKEwiei-_Y4or0AhXEy6QKHefjDyYQ9QF6BAgREAE#imgrc=ifTSkpz9J2bh_M"),
-                  ),
+                  // const CircleAvatar(
+                  //   radius: 30.0,
+                  //   backgroundColor: Colors.white,
+                  //   foregroundImage: AssetImage('assets/user.png'),
+                  //   //  NetworkImage(
+                  //   //     "https://www.google.com/search?q=profile+image&rlz=1C1BNSD_enPK948PK948&tbm=isch&source=iu&ictx=1&fir=B3G4vEo9lSBh0M%252CFvQHUVZ-cx81xM%252C_%253BH6pHpB03ZEAgeM%252Cwg0CyFWNfK7o5M%252C_%253BTUPxmKQ-sparcM%252CFvQHUVZ-cx81xM%252C_%253Bc4DKZX1IkCpVhM%252Cb5C9ViMmmhpq-M%252C_%253BifTSkpz9J2bh_M%252CurvXhMiZrB4IuM%252C_%253BeHQKa74ZnnpTfM%252C4XfudSI_3wLzPM%252C_%253ByRz0asXqc1iKxM%252Cb5C9ViMmmhpq-M%252C_%253BS2NNOWEtx4Sh8M%252CWIYPytbMl_8XfM%252C_%253B-h20Jdis7Qx6mM%252CwxS10_IL7Dpp9M%252C_%253BJpaFCmffhUdABM%252CeirPelkp9eoYkM%252C_%253BC7pA_LYt9qMKyM%252CMG0JGB0B8kPXNM%252C_%253B2DnrLk3Tlyfo4M%252C8eDeiABW8CreFM%252C_%253Blcjtk8drNcGL8M%252COgWk3wP_2xVHMM%252C_%253Bfzm-cB-sF1nIvM%252C4XfudSI_3wLzPM%252C_%253BWgJP1HLvsHDWSM%252C-_VDyVVleiKWeM%252C_%253BXVWcKFwzJq264M%252CFvQHUVZ-cx81xM%252C_&vet=1&usg=AI4_-kRQZaW9Ubn_p-A_vdJl88LIA7BAdg&sa=X&ved=2ahUKEwiei-_Y4or0AhXEy6QKHefjDyYQ9QF6BAgREAE#imgrc=ifTSkpz9J2bh_M"),
+                  // ),
                   const SizedBox(
                     height: 15.0,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      const Text(
+                      Text(
                         "Basit",
                         style: TextStyle(
                           color: Colors.white,
@@ -76,15 +76,15 @@ class AppDrawer extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          // Navigator.of(context).pushNamed(Profile.profile);
-                        },
-                        child: const Icon(
-                          Icons.person,
-                          color: Colors.white,
-                        ),
-                      )
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     // Navigator.of(context).pushNamed(Profile.profile);
+                      //   },
+                      //   child: const Icon(
+                      //     Icons.person,
+                      //     color: Colors.white,
+                      //   ),
+                      // )
                     ],
                   ),
                   const Text(

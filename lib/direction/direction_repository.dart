@@ -27,6 +27,8 @@ class DirectionsRepository {
     // Check if response is successful
     if (response.statusCode == 200) {
       if ((response.data['routes'] as List).isNotEmpty) {
+        // print('-----------------------------');
+        // print(response.data);
         return Directions.fromMap(response.data);
       } else {
         return null;

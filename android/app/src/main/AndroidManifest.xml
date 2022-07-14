@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.maps">
    <application
-        android:label="NUTECH Tracking"
+        android:label="NUTECH Transport"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
